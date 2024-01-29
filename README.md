@@ -1,7 +1,17 @@
 # Train RL agents to play Pokemon Red
-  
-## Watch the Video on Youtube! 
 
+## First RL agent to beat Pokemon Red! 🎉
+### Watch the Video on Youtube! 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=MEQWO9CSJDo
+" target="_blank"><img src="http://img.youtube.com/vi/MEQWO9CSJDo/0.jpg" 
+alt="From Pixels to Pokedex: How This RL Agent Conquered Pokemon Red! Ep1" height="180" /></a>
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=_CqO5yhYv1E
+" target="_blank"><img src="http://img.youtube.com/vi/_CqO5yhYv1E/0.jpg" 
+alt="From Pixels to Pokedex: How This RL Agent Conquered Pokemon Red! Ep2" height="180" /></a>
+<p><sub>*Click to play the video</sub></p>
+<p>The code to reproduce the results in the video can be found in `<a href="/baselines/boey_baselines2/">baselines/boey_baselines2</a>` directory.</p>
+
+##
 <p float="left">
   <a href="https://youtu.be/DcYLT37ImBY">
     <img src="/assets/youtube.jpg?raw=true" height="192">
