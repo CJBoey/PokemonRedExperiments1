@@ -3,6 +3,8 @@ from pathlib import Path
 import uuid
 from baselines.boey_baselines2.red_gym_env import RedGymEnvV3 as RedGymEnv
 from stable_baselines3 import PPO
+from stable_baselines3.common.on_policy_algorithm import OnPolicyAlgorithm
+from stable_baselines3.common.policies import ActorCriticCnnPolicy
 from stable_baselines3.common import env_checker
 from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
 from stable_baselines3.common.utils import set_random_seed
@@ -56,7 +58,7 @@ def create_callbacks(use_wandb_logging=False, save_state_dir=None):
 if __name__ == '__main__':
 
     use_wandb_logging = False
-    cpu_multiplier = 0.5  # For R9 7950x: 1.0 for 32 cpu, 1.25 for 40 cpu, 1.5 for 48 cpu
+    cpu_multiplier = 0.1  # For R9 7950x: 1.0 for 32 cpu, 1.25 for 40 cpu, 1.5 for 48 cpu
     ep_length = 1024 * 1000 * 30  # 30m steps
     save_freq = 2048 * 10 * 2
     n_steps = int(5120 // cpu_multiplier) * 1
@@ -99,7 +101,7 @@ if __name__ == '__main__':
 
     learn_steps = 1
     # put a checkpoint here you want to start from
-    file_name = ''
+    file_name = r'D:\pokered\running\session_12893b31_env19_lr3e-4_ent01_bs2048_ep3_5120_vf05_v2_es2_fullrun_gamma96_ppo34_1329m\poke_9830400_steps'
     if file_name and not exists(file_name + '.zip'):
         raise Exception(f'File {file_name} does not exist!')
     
@@ -130,7 +132,14 @@ if __name__ == '__main__':
     if exists(file_name + '.zip'):
         print(f'\nloading checkpoint: {file_name}')
         new_gamma = 0.9996
-        model = PPO.load(file_name, env=env, ent_coef=0.01, n_epochs=1, gamma=new_gamma)  # , learning_rate=warmup_schedule(0.0003)
+        import torch
+        policy_kwargs = dict(
+            features_extractor_class=CustomCombinedExtractorV2,
+            share_features_extractor=True,
+            net_arch=[1024, 1024],  # dict(pi=[256, 256], vf=[256, 256])
+            activation_fn=torch.nn.ReLU,
+        )  # fix for loading checkpoint from other projects
+        model = PPO.load(file_name, env=env, ent_coef=0.01, n_epochs=1, gamma=new_gamma, custom_objects=dict(policy_kwargs=policy_kwargs))  # , learning_rate=warmup_schedule(0.0003)
         print(f'Loaded model1 --- LR: {model.learning_rate} OptimizerLR: {model.policy.optimizer.param_groups[0]["lr"]}, ent_coef: {model.ent_coef}, n_epochs: {model.n_epochs}, n_steps: {model.n_steps}, batch_size: {model.batch_size}, gamma: {model.gamma}, rollout_buffer.gamma: {model.rollout_buffer.gamma}')
         model.gamma = new_gamma
         model.rollout_buffer.gamma = new_gamma
